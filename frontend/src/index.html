@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication Module</title>
+    <title>Home Component</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #3498db;
@@ -12,644 +13,547 @@
             --accent-color: #e74c3c;
             --dark-color: #34495e;
             --light-color: #ecf0f1;
+            --text-color: #2c3e50;
+            --background-color: #f8f9fa;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
         body {
-            background-color: #f8f9fa;
+            background-color: var(--background-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
         }
         
-        .auth-container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        .navbar {
             background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
-        .auth-header {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--dark-color);
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
         }
         
-        .auth-header h2 {
-            font-weight: 600;
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-        }
-        
-        .btn-success {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-        
-        .btn-danger {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-        
-        .form-text {
-            color: #6c757d;
-        }
-        
-        .invalid-feedback {
-            display: block;
-        }
-        
-        .auth-switch {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .user-hub {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        .category-nav {
             background-color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         
-        .user-info {
+        .category-list {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .category-item {
+            padding: 10px 20px;
+            border-radius: 25px;
             background-color: var(--light-color);
-            padding: 20px;
-            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .category-item:hover, .category-item.active {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
             margin-bottom: 20px;
         }
         
-        .modal-content {
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .timer-container {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 15px;
             border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .timer-label {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .timer {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .products-section {
+            padding: 20px 0 40px;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 0 15px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-image {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            color: var(--dark-color);
+        }
+        
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .current-price {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+        
+        .original-price {
+            text-decoration: line-through;
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+        
+        .discount-badge {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .stars {
+            color: #f39c12;
+        }
+        
+        .rating-count {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .btn-add-to-cart {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-add-to-cart:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-wishlist {
+            background: none;
+            border: none;
+            color: #bdc3c7;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        
+        .btn-wishlist:hover {
+            color: var(--accent-color);
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .category-list {
+                gap: 10px;
+            }
+            
+            .category-item {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .timer {
+                font-size: 1.5rem;
+            }
+            
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+                max-width: 350px;
+                margin: 0 auto;
+            }
+            
+            .category-list {
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding-bottom: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="app" class="container py-4">
-        <!-- Authentication Component -->
-        <div id="auth-component" v-if="!isAuthenticated">
-            <!-- Login Form -->
-            <div id="login-form" v-if="authMode === 'login'" class="auth-container">
-                <div class="auth-header">
-                    <h2>Login to Your Account</h2>
-                    <p class="text-muted">Enter your credentials to continue</p>
-                </div>
-                
-                <form @submit.prevent="handleLogin">
-                    <div class="mb-3">
-                        <label for="login-email" class="form-label">Email Address</label>
-                        <input 
-                            type="email" 
-                            class="form-control" 
-                            id="login-email" 
-                            v-model="loginForm.email"
-                            :class="{'is-invalid': loginErrors.email}"
-                            required
-                        >
-                        <div class="invalid-feedback" v-if="loginErrors.email">
-                            {{ loginErrors.email }}
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="login-password" class="form-label">Password</label>
-                        <input 
-                            type="password" 
-                            class="form-control" 
-                            id="login-password" 
-                            v-model="loginForm.password"
-                            :class="{'is-invalid': loginErrors.password}"
-                            required
-                        >
-                        <div class="invalid-feedback" v-if="loginErrors.password">
-                            {{ loginErrors.password }}
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg" :disabled="loading">
-                            <span v-if="loading" class="spinner-border spinner-border-sm" role="status"></span>
-                            {{ loading ? 'Logging in...' : 'Login' }}
-                        </button>
-                    </div>
-                    
-                    <div class="auth-switch">
-                        <p>Don't have an account? <a href="#" @click="switchAuthMode('signup')">Sign up here</a></p>
-                    </div>
-                </form>
-            </div>
-            
-            <!-- Signup Form -->
-            <div id="signup-form" v-if="authMode === 'signup'" class="auth-container">
-                <div class="auth-header">
-                    <h2>Create Your Account</h2>
-                    <p class="text-muted">Fill in your details to get started</p>
-                </div>
-                
-                <form @submit.prevent="handleSignup">
-                    <div class="mb-3">
-                        <label for="signup-name" class="form-label">Full Name</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            id="signup-name" 
-                            v-model="signupForm.name"
-                            :class="{'is-invalid': signupErrors.name}"
-                            required
-                        >
-                        <div class="invalid-feedback" v-if="signupErrors.name">
-                            {{ signupErrors.name }}
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="signup-email" class="form-label">Email Address</label>
-                        <input 
-                            type="email" 
-                            class="form-control" 
-                            id="signup-email" 
-                            v-model="signupForm.email"
-                            :class="{'is-invalid': signupErrors.email}"
-                            required
-                        >
-                        <div class="invalid-feedback" v-if="signupErrors.email">
-                            {{ signupErrors.email }}
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="signup-phone" class="form-label">Phone Number</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            id="signup-phone" 
-                            v-model="signupForm.phone"
-                            :class="{'is-invalid': signupErrors.phone}"
-                            pattern="[0-9]*"
-                            inputmode="numeric"
-                            required
-                        >
-                        <div class="form-text">Numbers only, no spaces or special characters</div>
-                        <div class="invalid-feedback" v-if="signupErrors.phone">
-                            {{ signupErrors.phone }}
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="signup-password" class="form-label">Password</label>
-                        <input 
-                            type="password" 
-                            class="form-control" 
-                            id="signup-password" 
-                            v-model="signupForm.password"
-                            :class="{'is-invalid': signupErrors.password}"
-                            required
-                        >
-                        <div class="form-text">Must be at least 8 characters long</div>
-                        <div class="invalid-feedback" v-if="signupErrors.password">
-                            {{ signupErrors.password }}
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="signup-confirm-password" class="form-label">Confirm Password</label>
-                        <input 
-                            type="password" 
-                            class="form-control" 
-                            id="signup-confirm-password" 
-                            v-model="signupForm.confirmPassword"
-                            :class="{'is-invalid': signupErrors.confirmPassword}"
-                            required
-                        >
-                        <div class="invalid-feedback" v-if="signupErrors.confirmPassword">
-                            {{ signupErrors.confirmPassword }}
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success btn-lg" :disabled="loading">
-                            <span v-if="loading" class="spinner-border spinner-border-sm" role="status"></span>
-                            {{ loading ? 'Creating Account...' : 'Create Account' }}
-                        </button>
-                    </div>
-                    
-                    <div class="auth-switch">
-                        <p>Already have an account? <a href="#" @click="switchAuthMode('login')">Login here</a></p>
-                    </div>
-                </form>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">ShopNow</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Deals</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
             </div>
         </div>
-        
-        <!-- User Management Hub -->
-        <div id="user-hub" v-if="isAuthenticated" class="user-hub">
-            <div class="user-header text-center mb-4">
-                <h2>User Management Hub</h2>
-                <p class="text-muted">Manage your account settings</p>
-            </div>
-            
-            <div class="user-info mb-4">
-                <h4>Account Information</h4>
-                <p><strong>Name:</strong> {{ currentUser.name }}</p>
-                <p><strong>Email:</strong> {{ currentUser.email }}</p>
-                <p><strong>Phone:</strong> {{ currentUser.phone }}</p>
-                <p><strong>Member since:</strong> {{ formatDate(currentUser.createdAt) }}</p>
-            </div>
-            
-            <div class="d-grid gap-2">
-                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                    Delete Account
-                </button>
-                <button class="btn btn-outline-secondary" @click="handleLogout">
-                    Logout
-                </button>
-            </div>
-        </div>
-        
-        <!-- Delete Account Confirmation Modal -->
-        <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Confirm Account Deletion</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete your account? This action cannot be undone.</p>
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Enter your password to confirm:</label>
-                            <input type="password" class="form-control" id="confirmPassword" v-model="confirmPassword">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger" @click="handleDeleteAccount">Delete Account</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Toast for notifications -->
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
-                    <strong class="me-auto" id="toastTitle">Notification</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                <div class="toast-body" id="toastMessage"></div>
-            </div>
+    </nav>
+    
+    <!-- Category Navigation -->
+    <div class="category-nav">
+        <div class="container">
+            <ul class="category-list">
+                <li class="category-item active">All Products</li>
+                <li class="category-item">Electronics</li>
+                <li class="category-item">Fashion</li>
+                <li class="category-item">Home & Garden</li>
+                <li class="category-item">Beauty</li>
+                <li class="category-item">Sports</li>
+                <li class="category-item">Toys</li>
+                <li class="category-item">Books</li>
+            </ul>
         </div>
     </div>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Summer Sale is Live!</h1>
+                <p class="hero-subtitle">Get up to 50% off on selected items. Limited time offer. Don't miss out!</p>
+                
+                <div class="timer-container">
+                    <div class="timer-label">Offer ends in:</div>
+                    <div class="timer" id="countdown-timer">24:00:00</div>
+                </div>
+                
+                <button class="btn btn-light btn-lg">Shop Now <i class="fas fa-arrow-right ms-2"></i></button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="container">
+            <h2 class="section-title">Featured Products</h2>
+            
+            <div class="product-grid">
+                <!-- Product Card 1 -->
+                <div class="product-card">
+                    <img src="https://picsum.photos/seed/product1/300/200" alt="Wireless Headphones" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Wireless Bluetooth Headphones</h3>
+                        <div class="product-price">
+                            <span class="current-price">$89.99</span>
+                            <span class="original-price">$129.99</span>
+                            <span class="discount-badge">30% OFF</span>
+                        </div>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="rating-count">(128)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-add-to-cart">Add to Cart</button>
+                            <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Card 2 -->
+                <div class="product-card">
+                    <img src="https://picsum.photos/seed/product2/300/200" alt="Smart Watch" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Smart Fitness Tracker</h3>
+                        <div class="product-price">
+                            <span class="current-price">$59.99</span>
+                            <span class="original-price">$79.99</span>
+                            <span class="discount-badge">25% OFF</span>
+                        </div>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span class="rating-count">(96)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-add-to-cart">Add to Cart</button>
+                            <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Card 3 -->
+                <div class="product-card">
+                    <img src="https://picsum.photos/seed/product3/300/200" alt="Coffee Maker" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Automatic Coffee Maker</h3>
+                        <div class="product-price">
+                            <span class="current-price">$129.99</span>
+                            <span class="original-price">$159.99</span>
+                            <span class="discount-badge">19% OFF</span>
+                        </div>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span class="rating-count">(215)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-add-to-cart">Add to Cart</button>
+                            <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Card 4 -->
+                <div class="product-card">
+                    <img src="https://picsum.photos/seed/product4/300/200" alt="Backpack" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Waterproof Travel Backpack</h3>
+                        <div class="product-price">
+                            <span class="current-price">$49.99</span>
+                            <span class="original-price">$69.99</span>
+                            <span class="discount-badge">29% OFF</span>
+                        </div>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span class="rating-count">(78)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-add-to-cart">Add to Cart</button>
+                            <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Real-time Clock -->
+    <div class="container text-center my-5">
+        <div class="bg-light p-4 rounded">
+            <h3>Current Time</h3>
+            <div id="real-time-clock" class="fs-1 fw-bold text-primary">12:00:00 PM</div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2023 ShopNow. All rights reserved.</p>
+            <div class="mt-3">
+                <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-light"><i class="fab fa-pinterest"></i></a>
+            </div>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
-        const { createApp, ref, computed, onMounted } = Vue;
+        // Real-time clock functionality
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes().toString().padStart(2, '0');
+            let seconds = now.getSeconds().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            hours = hours.toString().padStart(2, '0');
+            
+            const timeString = `${hours}:${minutes}:${seconds} ${ampm}`;
+            document.getElementById('real-time-clock').textContent = timeString;
+            
+            setTimeout(updateClock, 1000);
+        }
         
-        // Auth service using localStorage
-        const authService = {
-            // Get all users from localStorage
-            getUsers() {
-                const users = localStorage.getItem('users');
-                return users ? JSON.parse(users) : [];
-            },
+        // Countdown timer for the sale
+        function updateCountdown() {
+            // Set the end time for the sale (24 hours from now)
+            const now = new Date();
+            const endTime = new Date(now.getTime() + 24 * 60 * 60 * 1000);
             
-            // Save users to localStorage
-            saveUsers(users) {
-                localStorage.setItem('users', JSON.stringify(users));
-            },
+            const timeLeft = endTime - now;
             
-            // Get current user from localStorage
-            getCurrentUser() {
-                const user = localStorage.getItem('currentUser');
-                return user ? JSON.parse(user) : null;
-            },
+            let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
             
-            // Set current user in localStorage
-            setCurrentUser(user) {
-                if (user) {
-                    localStorage.setItem('currentUser', JSON.stringify(user));
+            hours = hours.toString().padStart(2, '0');
+            minutes = minutes.toString().padStart(2, '0');
+            seconds = seconds.toString().padStart(2, '0');
+            
+            document.getElementById('countdown-timer').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            setTimeout(updateCountdown, 1000);
+        }
+        
+        // Category selection
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelector('.category-item.active').classList.remove('active');
+                this.classList.add('active');
+            });
+        });
+        
+        // Wishlist toggle
+        document.querySelectorAll('.btn-wishlist').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                if (icon.classList.contains('far')) {
+                    icon.classList.replace('far', 'fas');
+                    icon.style.color = '#e74c3c';
                 } else {
-                    localStorage.removeItem('currentUser');
+                    icon.classList.replace('fas', 'far');
+                    icon.style.color = '';
                 }
-            },
-            
-            // Register a new user
-            register(userData) {
-                const users = this.getUsers();
-                
-                // Check if email already exists
-                if (users.some(user => user.email === userData.email)) {
-                    return { success: false, message: 'Email already registered' };
-                }
-                
-                // Create new user object
-                const newUser = {
-                    id: Date.now().toString(),
-                    name: userData.name,
-                    email: userData.email,
-                    phone: userData.phone,
-                    password: userData.password, // In a real app, this would be hashed
-                    createdAt: new Date().toISOString()
-                };
-                
-                // Add to users array and save
-                users.push(newUser);
-                this.saveUsers(users);
-                
-                return { success: true, user: newUser };
-            },
-            
-            // Login user
-            login(email, password) {
-                const users = this.getUsers();
-                const user = users.find(u => u.email === email && u.password === password);
-                
-                if (user) {
-                    this.setCurrentUser(user);
-                    return { success: true, user };
-                } else {
-                    return { success: false, message: 'Invalid email or password' };
-                }
-            },
-            
-            // Logout user
-            logout() {
-                this.setCurrentUser(null);
-                return { success: true };
-            },
-            
-            // Delete user account
-            deleteAccount(userId, password) {
-                const users = this.getUsers();
-                const currentUser = this.getCurrentUser();
-                
-                if (!currentUser || currentUser.id !== userId) {
-                    return { success: false, message: 'Unauthorized' };
-                }
-                
-                // Verify password
-                const userIndex = users.findIndex(u => u.id === userId && u.password === password);
-                if (userIndex === -1) {
-                    return { success: false, message: 'Incorrect password' };
-                }
-                
-                // Remove user from array
-                users.splice(userIndex, 1);
-                this.saveUsers(users);
-                
-                // Clear current user
-                this.setCurrentUser(null);
-                
-                return { success: true };
-            }
+            });
+        });
+        
+        // Initialize everything when the page loads
+        window.onload = function() {
+            updateClock();
+            updateCountdown();
         };
-        
-        createApp({
-            setup() {
-                // State management
-                const isAuthenticated = ref(false);
-                const authMode = ref('login'); // 'login' or 'signup'
-                const loading = ref(false);
-                const currentUser = ref(null);
-                const confirmPassword = ref('');
-                
-                // Form data
-                const loginForm = ref({
-                    email: '',
-                    password: ''
-                });
-                
-                const signupForm = ref({
-                    name: '',
-                    email: '',
-                    phone: '',
-                    password: '',
-                    confirmPassword: ''
-                });
-                
-                // Form errors
-                const loginErrors = ref({});
-                const signupErrors = ref({});
-                
-                // Initialize the app
-                onMounted(() => {
-                    const user = authService.getCurrentUser();
-                    if (user) {
-                        isAuthenticated.value = true;
-                        currentUser.value = user;
-                    }
-                });
-                
-                // Switch between login and signup forms
-                const switchAuthMode = (mode) => {
-                    authMode.value = mode;
-                    loginErrors.value = {};
-                    signupErrors.value = {};
-                };
-                
-                // Validate login form
-                const validateLoginForm = () => {
-                    const errors = {};
-                    
-                    if (!loginForm.value.email) {
-                        errors.email = 'Email is required';
-                    } else if (!/\S+@\S+\.\S+/.test(loginForm.value.email)) {
-                        errors.email = 'Email is invalid';
-                    }
-                    
-                    if (!loginForm.value.password) {
-                        errors.password = 'Password is required';
-                    }
-                    
-                    loginErrors.value = errors;
-                    return Object.keys(errors).length === 0;
-                };
-                
-                // Validate signup form
-                const validateSignupForm = () => {
-                    const errors = {};
-                    
-                    if (!signupForm.value.name) {
-                        errors.name = 'Name is required';
-                    } else if (signupForm.value.name.length < 2) {
-                        errors.name = 'Name must be at least 2 characters';
-                    }
-                    
-                    if (!signupForm.value.email) {
-                        errors.email = 'Email is required';
-                    } else if (!/\S+@\S+\.\S+/.test(signupForm.value.email)) {
-                        errors.email = 'Email is invalid';
-                    }
-                    
-                    if (!signupForm.value.phone) {
-                        errors.phone = 'Phone number is required';
-                    } else if (!/^\d+$/.test(signupForm.value.phone)) {
-                        errors.phone = 'Phone number must contain only digits';
-                    }
-                    
-                    if (!signupForm.value.password) {
-                        errors.password = 'Password is required';
-                    } else if (signupForm.value.password.length < 8) {
-                        errors.password = 'Password must be at least 8 characters';
-                    }
-                    
-                    if (!signupForm.value.confirmPassword) {
-                        errors.confirmPassword = 'Please confirm your password';
-                    } else if (signupForm.value.password !== signupForm.value.confirmPassword) {
-                        errors.confirmPassword = 'Passwords do not match';
-                    }
-                    
-                    signupErrors.value = errors;
-                    return Object.keys(errors).length === 0;
-                };
-                
-                // Handle login
-                const handleLogin = () => {
-                    if (!validateLoginForm()) return;
-                    
-                    loading.value = true;
-                    
-                    // Simulate API call delay
-                    setTimeout(() => {
-                        const result = authService.login(
-                            loginForm.value.email, 
-                            loginForm.value.password
-                        );
-                        
-                        if (result.success) {
-                            isAuthenticated.value = true;
-                            currentUser.value = result.user;
-                            showNotification('Success', 'Logged in successfully!', 'success');
-                        } else {
-                            loginErrors.value = { general: result.message };
-                            showNotification('Error', result.message, 'error');
-                        }
-                        
-                        loading.value = false;
-                    }, 1000);
-                };
-                
-                // Handle signup
-                const handleSignup = () => {
-                    if (!validateSignupForm()) return;
-                    
-                    loading.value = true;
-                    
-                    // Simulate API call delay
-                    setTimeout(() => {
-                        const result = authService.register(signupForm.value);
-                        
-                        if (result.success) {
-                            authService.setCurrentUser(result.user);
-                            isAuthenticated.value = true;
-                            currentUser.value = result.user;
-                            showNotification('Success', 'Account created successfully!', 'success');
-                        } else {
-                            signupErrors.value = { general: result.message };
-                            showNotification('Error', result.message, 'error');
-                        }
-                        
-                        loading.value = false;
-                    }, 1000);
-                };
-                
-                // Handle logout
-                const handleLogout = () => {
-                    authService.logout();
-                    isAuthenticated.value = false;
-                    currentUser.value = null;
-                    showNotification('Success', 'Logged out successfully!', 'success');
-                };
-                
-                // Handle delete account
-                const handleDeleteAccount = () => {
-                    if (!confirmPassword.value) {
-                        showNotification('Error', 'Please enter your password to confirm', 'error');
-                        return;
-                    }
-                    
-                    const result = authService.deleteAccount(
-                        currentUser.value.id, 
-                        confirmPassword.value
-                    );
-                    
-                    if (result.success) {
-                        isAuthenticated.value = false;
-                        currentUser.value = null;
-                        confirmPassword.value = '';
-                        
-                        // Close the modal
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteAccountModal'));
-                        modal.hide();
-                        
-                        showNotification('Success', 'Account deleted successfully!', 'success');
-                    } else {
-                        showNotification('Error', result.message, 'error');
-                    }
-                };
-                
-                // Format date for display
-                const formatDate = (dateString) => {
-                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                    return new Date(dateString).toLocaleDateString(undefined, options);
-                };
-                
-                // Show notification toast
-                const showNotification = (title, message, type = 'info') => {
-                    const toastTitle = document.getElementById('toastTitle');
-                    const toastMessage = document.getElementById('toastMessage');
-                    const toast = new bootstrap.Toast(document.getElementById('notificationToast'));
-                    
-                    toastTitle.textContent = title;
-                    toastMessage.textContent = message;
-                    
-                    // Set different background color based on type
-                    const toastElement = document.getElementById('notificationToast');
-                    toastElement.classList.remove('bg-success', 'bg-danger', 'bg-info');
-                    
-                    if (type === 'success') {
-                        toastElement.classList.add('bg-success', 'text-white');
-                    } else if (type === 'error') {
-                        toastElement.classList.add('bg-danger', 'text-white');
-                    } else {
-                        toastElement.classList.add('bg-info', 'text-white');
-                    }
-                    
-                    toast.show();
-                };
-                
-                return {
-                    isAuthenticated,
-                    authMode,
-                    loading,
-                    currentUser,
-                    confirmPassword,
-                    loginForm,
-                    signupForm,
-                    loginErrors,
-                    signupErrors,
-                    switchAuthMode,
-                    handleLogin,
-                    handleSignup,
-                    handleLogout,
-                    handleDeleteAccount,
-                    formatDate
-                };
-            }
-        }).mount('#app');
     </script>
 </body>
 </html>
