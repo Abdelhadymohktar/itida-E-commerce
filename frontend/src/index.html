@@ -1,13 +1,655 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>ECommerce</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Module</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --dark-color: #34495e;
+            --light-color: #ecf0f1;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--dark-color);
+        }
+        
+        .auth-header h2 {
+            font-weight: 600;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        .form-text {
+            color: #6c757d;
+        }
+        
+        .invalid-feedback {
+            display: block;
+        }
+        
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .user-hub {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+        
+        .user-info {
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .modal-content {
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-  <app-root></app-root>
+    <div id="app" class="container py-4">
+        <!-- Authentication Component -->
+        <div id="auth-component" v-if="!isAuthenticated">
+            <!-- Login Form -->
+            <div id="login-form" v-if="authMode === 'login'" class="auth-container">
+                <div class="auth-header">
+                    <h2>Login to Your Account</h2>
+                    <p class="text-muted">Enter your credentials to continue</p>
+                </div>
+                
+                <form @submit.prevent="handleLogin">
+                    <div class="mb-3">
+                        <label for="login-email" class="form-label">Email Address</label>
+                        <input 
+                            type="email" 
+                            class="form-control" 
+                            id="login-email" 
+                            v-model="loginForm.email"
+                            :class="{'is-invalid': loginErrors.email}"
+                            required
+                        >
+                        <div class="invalid-feedback" v-if="loginErrors.email">
+                            {{ loginErrors.email }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="login-password" class="form-label">Password</label>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="login-password" 
+                            v-model="loginForm.password"
+                            :class="{'is-invalid': loginErrors.password}"
+                            required
+                        >
+                        <div class="invalid-feedback" v-if="loginErrors.password">
+                            {{ loginErrors.password }}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg" :disabled="loading">
+                            <span v-if="loading" class="spinner-border spinner-border-sm" role="status"></span>
+                            {{ loading ? 'Logging in...' : 'Login' }}
+                        </button>
+                    </div>
+                    
+                    <div class="auth-switch">
+                        <p>Don't have an account? <a href="#" @click="switchAuthMode('signup')">Sign up here</a></p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signup-form" v-if="authMode === 'signup'" class="auth-container">
+                <div class="auth-header">
+                    <h2>Create Your Account</h2>
+                    <p class="text-muted">Fill in your details to get started</p>
+                </div>
+                
+                <form @submit.prevent="handleSignup">
+                    <div class="mb-3">
+                        <label for="signup-name" class="form-label">Full Name</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="signup-name" 
+                            v-model="signupForm.name"
+                            :class="{'is-invalid': signupErrors.name}"
+                            required
+                        >
+                        <div class="invalid-feedback" v-if="signupErrors.name">
+                            {{ signupErrors.name }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="signup-email" class="form-label">Email Address</label>
+                        <input 
+                            type="email" 
+                            class="form-control" 
+                            id="signup-email" 
+                            v-model="signupForm.email"
+                            :class="{'is-invalid': signupErrors.email}"
+                            required
+                        >
+                        <div class="invalid-feedback" v-if="signupErrors.email">
+                            {{ signupErrors.email }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="signup-phone" class="form-label">Phone Number</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="signup-phone" 
+                            v-model="signupForm.phone"
+                            :class="{'is-invalid': signupErrors.phone}"
+                            pattern="[0-9]*"
+                            inputmode="numeric"
+                            required
+                        >
+                        <div class="form-text">Numbers only, no spaces or special characters</div>
+                        <div class="invalid-feedback" v-if="signupErrors.phone">
+                            {{ signupErrors.phone }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="signup-password" class="form-label">Password</label>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="signup-password" 
+                            v-model="signupForm.password"
+                            :class="{'is-invalid': signupErrors.password}"
+                            required
+                        >
+                        <div class="form-text">Must be at least 8 characters long</div>
+                        <div class="invalid-feedback" v-if="signupErrors.password">
+                            {{ signupErrors.password }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="signup-confirm-password" class="form-label">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="signup-confirm-password" 
+                            v-model="signupForm.confirmPassword"
+                            :class="{'is-invalid': signupErrors.confirmPassword}"
+                            required
+                        >
+                        <div class="invalid-feedback" v-if="signupErrors.confirmPassword">
+                            {{ signupErrors.confirmPassword }}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg" :disabled="loading">
+                            <span v-if="loading" class="spinner-border spinner-border-sm" role="status"></span>
+                            {{ loading ? 'Creating Account...' : 'Create Account' }}
+                        </button>
+                    </div>
+                    
+                    <div class="auth-switch">
+                        <p>Already have an account? <a href="#" @click="switchAuthMode('login')">Login here</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- User Management Hub -->
+        <div id="user-hub" v-if="isAuthenticated" class="user-hub">
+            <div class="user-header text-center mb-4">
+                <h2>User Management Hub</h2>
+                <p class="text-muted">Manage your account settings</p>
+            </div>
+            
+            <div class="user-info mb-4">
+                <h4>Account Information</h4>
+                <p><strong>Name:</strong> {{ currentUser.name }}</p>
+                <p><strong>Email:</strong> {{ currentUser.email }}</p>
+                <p><strong>Phone:</strong> {{ currentUser.phone }}</p>
+                <p><strong>Member since:</strong> {{ formatDate(currentUser.createdAt) }}</p>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                    Delete Account
+                </button>
+                <button class="btn btn-outline-secondary" @click="handleLogout">
+                    Logout
+                </button>
+            </div>
+        </div>
+        
+        <!-- Delete Account Confirmation Modal -->
+        <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Account Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Enter your password to confirm:</label>
+                            <input type="password" class="form-control" id="confirmPassword" v-model="confirmPassword">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" @click="handleDeleteAccount">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toast for notifications -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto" id="toastTitle">Notification</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body" id="toastMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue;
+        
+        // Auth service using localStorage
+        const authService = {
+            // Get all users from localStorage
+            getUsers() {
+                const users = localStorage.getItem('users');
+                return users ? JSON.parse(users) : [];
+            },
+            
+            // Save users to localStorage
+            saveUsers(users) {
+                localStorage.setItem('users', JSON.stringify(users));
+            },
+            
+            // Get current user from localStorage
+            getCurrentUser() {
+                const user = localStorage.getItem('currentUser');
+                return user ? JSON.parse(user) : null;
+            },
+            
+            // Set current user in localStorage
+            setCurrentUser(user) {
+                if (user) {
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                } else {
+                    localStorage.removeItem('currentUser');
+                }
+            },
+            
+            // Register a new user
+            register(userData) {
+                const users = this.getUsers();
+                
+                // Check if email already exists
+                if (users.some(user => user.email === userData.email)) {
+                    return { success: false, message: 'Email already registered' };
+                }
+                
+                // Create new user object
+                const newUser = {
+                    id: Date.now().toString(),
+                    name: userData.name,
+                    email: userData.email,
+                    phone: userData.phone,
+                    password: userData.password, // In a real app, this would be hashed
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Add to users array and save
+                users.push(newUser);
+                this.saveUsers(users);
+                
+                return { success: true, user: newUser };
+            },
+            
+            // Login user
+            login(email, password) {
+                const users = this.getUsers();
+                const user = users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    this.setCurrentUser(user);
+                    return { success: true, user };
+                } else {
+                    return { success: false, message: 'Invalid email or password' };
+                }
+            },
+            
+            // Logout user
+            logout() {
+                this.setCurrentUser(null);
+                return { success: true };
+            },
+            
+            // Delete user account
+            deleteAccount(userId, password) {
+                const users = this.getUsers();
+                const currentUser = this.getCurrentUser();
+                
+                if (!currentUser || currentUser.id !== userId) {
+                    return { success: false, message: 'Unauthorized' };
+                }
+                
+                // Verify password
+                const userIndex = users.findIndex(u => u.id === userId && u.password === password);
+                if (userIndex === -1) {
+                    return { success: false, message: 'Incorrect password' };
+                }
+                
+                // Remove user from array
+                users.splice(userIndex, 1);
+                this.saveUsers(users);
+                
+                // Clear current user
+                this.setCurrentUser(null);
+                
+                return { success: true };
+            }
+        };
+        
+        createApp({
+            setup() {
+                // State management
+                const isAuthenticated = ref(false);
+                const authMode = ref('login'); // 'login' or 'signup'
+                const loading = ref(false);
+                const currentUser = ref(null);
+                const confirmPassword = ref('');
+                
+                // Form data
+                const loginForm = ref({
+                    email: '',
+                    password: ''
+                });
+                
+                const signupForm = ref({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    password: '',
+                    confirmPassword: ''
+                });
+                
+                // Form errors
+                const loginErrors = ref({});
+                const signupErrors = ref({});
+                
+                // Initialize the app
+                onMounted(() => {
+                    const user = authService.getCurrentUser();
+                    if (user) {
+                        isAuthenticated.value = true;
+                        currentUser.value = user;
+                    }
+                });
+                
+                // Switch between login and signup forms
+                const switchAuthMode = (mode) => {
+                    authMode.value = mode;
+                    loginErrors.value = {};
+                    signupErrors.value = {};
+                };
+                
+                // Validate login form
+                const validateLoginForm = () => {
+                    const errors = {};
+                    
+                    if (!loginForm.value.email) {
+                        errors.email = 'Email is required';
+                    } else if (!/\S+@\S+\.\S+/.test(loginForm.value.email)) {
+                        errors.email = 'Email is invalid';
+                    }
+                    
+                    if (!loginForm.value.password) {
+                        errors.password = 'Password is required';
+                    }
+                    
+                    loginErrors.value = errors;
+                    return Object.keys(errors).length === 0;
+                };
+                
+                // Validate signup form
+                const validateSignupForm = () => {
+                    const errors = {};
+                    
+                    if (!signupForm.value.name) {
+                        errors.name = 'Name is required';
+                    } else if (signupForm.value.name.length < 2) {
+                        errors.name = 'Name must be at least 2 characters';
+                    }
+                    
+                    if (!signupForm.value.email) {
+                        errors.email = 'Email is required';
+                    } else if (!/\S+@\S+\.\S+/.test(signupForm.value.email)) {
+                        errors.email = 'Email is invalid';
+                    }
+                    
+                    if (!signupForm.value.phone) {
+                        errors.phone = 'Phone number is required';
+                    } else if (!/^\d+$/.test(signupForm.value.phone)) {
+                        errors.phone = 'Phone number must contain only digits';
+                    }
+                    
+                    if (!signupForm.value.password) {
+                        errors.password = 'Password is required';
+                    } else if (signupForm.value.password.length < 8) {
+                        errors.password = 'Password must be at least 8 characters';
+                    }
+                    
+                    if (!signupForm.value.confirmPassword) {
+                        errors.confirmPassword = 'Please confirm your password';
+                    } else if (signupForm.value.password !== signupForm.value.confirmPassword) {
+                        errors.confirmPassword = 'Passwords do not match';
+                    }
+                    
+                    signupErrors.value = errors;
+                    return Object.keys(errors).length === 0;
+                };
+                
+                // Handle login
+                const handleLogin = () => {
+                    if (!validateLoginForm()) return;
+                    
+                    loading.value = true;
+                    
+                    // Simulate API call delay
+                    setTimeout(() => {
+                        const result = authService.login(
+                            loginForm.value.email, 
+                            loginForm.value.password
+                        );
+                        
+                        if (result.success) {
+                            isAuthenticated.value = true;
+                            currentUser.value = result.user;
+                            showNotification('Success', 'Logged in successfully!', 'success');
+                        } else {
+                            loginErrors.value = { general: result.message };
+                            showNotification('Error', result.message, 'error');
+                        }
+                        
+                        loading.value = false;
+                    }, 1000);
+                };
+                
+                // Handle signup
+                const handleSignup = () => {
+                    if (!validateSignupForm()) return;
+                    
+                    loading.value = true;
+                    
+                    // Simulate API call delay
+                    setTimeout(() => {
+                        const result = authService.register(signupForm.value);
+                        
+                        if (result.success) {
+                            authService.setCurrentUser(result.user);
+                            isAuthenticated.value = true;
+                            currentUser.value = result.user;
+                            showNotification('Success', 'Account created successfully!', 'success');
+                        } else {
+                            signupErrors.value = { general: result.message };
+                            showNotification('Error', result.message, 'error');
+                        }
+                        
+                        loading.value = false;
+                    }, 1000);
+                };
+                
+                // Handle logout
+                const handleLogout = () => {
+                    authService.logout();
+                    isAuthenticated.value = false;
+                    currentUser.value = null;
+                    showNotification('Success', 'Logged out successfully!', 'success');
+                };
+                
+                // Handle delete account
+                const handleDeleteAccount = () => {
+                    if (!confirmPassword.value) {
+                        showNotification('Error', 'Please enter your password to confirm', 'error');
+                        return;
+                    }
+                    
+                    const result = authService.deleteAccount(
+                        currentUser.value.id, 
+                        confirmPassword.value
+                    );
+                    
+                    if (result.success) {
+                        isAuthenticated.value = false;
+                        currentUser.value = null;
+                        confirmPassword.value = '';
+                        
+                        // Close the modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteAccountModal'));
+                        modal.hide();
+                        
+                        showNotification('Success', 'Account deleted successfully!', 'success');
+                    } else {
+                        showNotification('Error', result.message, 'error');
+                    }
+                };
+                
+                // Format date for display
+                const formatDate = (dateString) => {
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    return new Date(dateString).toLocaleDateString(undefined, options);
+                };
+                
+                // Show notification toast
+                const showNotification = (title, message, type = 'info') => {
+                    const toastTitle = document.getElementById('toastTitle');
+                    const toastMessage = document.getElementById('toastMessage');
+                    const toast = new bootstrap.Toast(document.getElementById('notificationToast'));
+                    
+                    toastTitle.textContent = title;
+                    toastMessage.textContent = message;
+                    
+                    // Set different background color based on type
+                    const toastElement = document.getElementById('notificationToast');
+                    toastElement.classList.remove('bg-success', 'bg-danger', 'bg-info');
+                    
+                    if (type === 'success') {
+                        toastElement.classList.add('bg-success', 'text-white');
+                    } else if (type === 'error') {
+                        toastElement.classList.add('bg-danger', 'text-white');
+                    } else {
+                        toastElement.classList.add('bg-info', 'text-white');
+                    }
+                    
+                    toast.show();
+                };
+                
+                return {
+                    isAuthenticated,
+                    authMode,
+                    loading,
+                    currentUser,
+                    confirmPassword,
+                    loginForm,
+                    signupForm,
+                    loginErrors,
+                    signupErrors,
+                    switchAuthMode,
+                    handleLogin,
+                    handleSignup,
+                    handleLogout,
+                    handleDeleteAccount,
+                    formatDate
+                };
+            }
+        }).mount('#app');
+    </script>
 </body>
 </html>
